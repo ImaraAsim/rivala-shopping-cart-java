@@ -1,0 +1,5 @@
+Num ! Name !      ! Price !    !Amount !    ! Bill !  
+ 1.  DEL        50000 RS         2         100000 Rs  
+3.  Lenovo    80000 RS         1          80000 Rs  
+4.  Torceba   900000 RS         3          1800000 Rs  
+5.  LG        1500000 RS         1          1500000 Rs  
