@@ -1,5 +1,0 @@
-Num ! Name !      ! Price !    !Amount !    ! Bill !  
- 1.  DEL        50000 RS         1         50000 Rs  
-3.  Lenovo    80000 RS         12         880000 Rs  
-2.  hp        70000 RS         6          350000 Rs  
-5.  LG        1500000 RS         12         16500000 Rs  
