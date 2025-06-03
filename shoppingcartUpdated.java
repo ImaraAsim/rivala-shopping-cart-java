@@ -14,29 +14,30 @@ public class shoppingcartUpdated {
 
     public static void main(String[] args) {
 
-        Scanner sc = new Scanner(System.in);
-        while (true) {
-            System.out.println("WELCOME TO HOME PAGE");
-            System.out.println("1. Register");
-            System.out.println("2. Login");
-            System.out.println("0. Exit");
-            System.out.println("Choose a Number:");
-            int choice = 0;
-            try {
-                choice = sc.nextInt();
-            } catch (InputMismatchException e) {
-                System.out.println("Enter Valid Number!");
-                sc.nextLine();
-            }
-            if (choice == 1) {
-                registration();
-            } else if (choice == 2) {
-                isLogin();
-            } else if (choice == 0) {
-                System.out.println("Happy Shopping!\nHope You Have Enjoyed Your Experience Here!\nPlease! Visit Us Again.");
-                break;
-            } else {
-                System.out.println("Invalid Number!");
+        try (Scanner sc = new Scanner(System.in)) {
+            while (true) {
+                System.out.println("WELCOME TO HOME PAGE");
+                System.out.println("1. Register");
+                System.out.println("2. Login");
+                System.out.println("0. Exit");
+                System.out.println("Choose a Number:");
+                int choice = 0;
+                try {
+                    choice = sc.nextInt();
+                } catch (InputMismatchException e) {
+                    System.out.println("Enter Valid Number!");
+                    sc.nextLine();
+                }
+                if (choice == 1) {
+                    registration();
+                } else if (choice == 2) {
+                    isLogin();
+                } else if (choice == 0) {
+                    System.out.println("Happy Shopping!\nHope You Have Enjoyed Your Experience Here!\nPlease! Visit Us Again.");
+                    break;
+                } else {
+                    System.out.println("Invalid Number!");
+                }
             }
         }
     }
@@ -151,7 +152,7 @@ public class shoppingcartUpdated {
             if (f.length() == 0) {
                 pw.printf("%-4s %-20s %-10s %-8s %-15s %-10s\n", "No.", "Item", "Price (Rs)", "Qty", "Discount", "Total (Rs)");
                 pw.flush();
-            }
+            } 
             while (true) {
                 System.out.println("\n |---- CATEGORIES ----|");
                 System.out.println("1. Clothing");
@@ -170,6 +171,7 @@ public class shoppingcartUpdated {
                 } else if (choose == 4) {
                     electronics(pw);
                 } else if (choose == 0) {
+                    pw.close();
                     cart();
                     break;
                 } else {
@@ -4578,8 +4580,6 @@ public class shoppingcartUpdated {
         Scanner sc = new Scanner(System.in);
         int choose = 0;
         try {
-
-            File file = new File(username + ".txt");
             BufferedReader br = new BufferedReader(new FileReader(username + ".txt"));
             String line;
 
@@ -4598,10 +4598,9 @@ public class shoppingcartUpdated {
             br.close();
 
             BufferedReader brr = new BufferedReader(new FileReader(username + ".txt"));
-            File temp = new File("temp.txt");
             FileWriter temp1 = new FileWriter("temp.txt");
 
-            PrintWriter pw = new PrintWriter("temp.txt");
+            PrintWriter pw = new PrintWriter(temp1);
             System.out.println(" WHAT DO YOU  WANT TO ADD?\n 1. AMOUNT  OF PRESENT PRODUCT\n 2. ADD NEW PRODUCT  ");
             choose = sc.nextInt();
             if (choose == 1) {
@@ -4679,8 +4678,6 @@ public class shoppingcartUpdated {
             } else if (choose == 2) {
                 categories();
                 System.out.println(" added successfully");
-
-
             } else {
                 System.out.println(" Invalid input ... select 1 or 2");
                 choose = sc.nextInt();
@@ -4709,7 +4706,7 @@ public class shoppingcartUpdated {
                 e.printStackTrace();
             }
             Path source = Paths.get("temp.txt");
-            Path target = Paths.get(username+".txt");
+            Path target = Paths.get(username + ".txt");
 
             try {
                 Files.move(source, target, StandardCopyOption.REPLACE_EXISTING);
@@ -4750,62 +4747,119 @@ public class shoppingcartUpdated {
         }
     }
 
-    public static  void  checkout() {
-        int total =0;
-        try {
-            File f = new File (username + ".txt");
-            BufferedReader br = new BufferedReader(new FileReader(username + ".txt"));
 
-            String line;
-            while((line=br.readLine())!=null) {
+    public static void checkout() {
+    int total = 0;
 
-                String[] parts = line.trim().split("\\s+");
-                if (integer(parts[5]) || integer(parts[6])) {
-                    if (parts.length >= 6) {
-                        boolean words = true;
-                        try {
-                            Integer.parseInt(parts[2]);
-                            words = true;
-                        } catch (NumberFormatException e) {
-                            words = false;
-                        }
-                        if (words == true) {
-                            int bill = Integer.parseInt(parts[5]);
-                            total += bill;
-                        } else {
-                            int bill = Integer.parseInt(parts[6]);
-                            total += bill;
-                        }
-                    } else {
-                        System.out.println("Skipping short/invalid line: " + line);
-                    }
+    try {
+        BufferedReader br = new BufferedReader(new FileReader(username + ".txt"));
+        String line;
+
+        while ((line = br.readLine()) != null) {
+            String[] parts = line.trim().split("\\s+");
+
+            if (parts.length > 6) {  // ensure parts[5] and parts[6] exist
+                // Try to parse parts[5] and parts[6]
+                int billPart5 = parseIntSafe(parts[5]);
+                int billPart6 = parseIntSafe(parts[6]);
+
+                if (billPart5 != -1) {
+                    total += billPart5;
+                } else if (billPart6 != -1) {
+                    total += billPart6;
                 }
-
+            } else {
+                System.out.println("Skipping short/invalid line: " + line);
             }
-            System.out.println(" Your  Total Bill is " + total);
-            FileWriter file = new FileWriter(username + ".txt", true);
-            PrintWriter pw = new PrintWriter(file);
-            pw.println("TOTAL BILL   :    " + total);
-            pw.close();
-            file.close();
-            System.out.println(   "------->   YOUR ORDER HISTORY IS   <------");
-            BufferedReader brr = new BufferedReader(new FileReader(username + ".txt"));
-            String lineTer;
-            while ((lineTer = br.readLine()) != null) {
-                System.out.println(lineTer);
-
-            }
-
-           brr.close();
-            payment(total);
-
-
-        } catch (IOException e) {
-            System.out.println("error");
-            throw new RuntimeException(e);
-
         }
+        br.close();
+
+        System.out.println("Your Total Bill is: " + total);
+
+        // Append total bill to file
+        try (PrintWriter pw = new PrintWriter(new FileWriter(username + ".txt", true))) {
+            pw.println("TOTAL BILL   :    " + total);
+        }
+
+        System.out.println("------->   YOUR ORDER HISTORY IS   <-------");
+        try (BufferedReader brr = new BufferedReader(new FileReader(username + ".txt"))) {
+            String lineTer;
+            while ((lineTer = brr.readLine()) != null) {
+                System.out.println(lineTer);
+            }
+        }
+
+        payment(total);
+
+    } catch (IOException e) {
+        System.out.println("Error!");
+        e.printStackTrace();
     }
+}
+
+// Helper method to safely parse integer, returns -1 if invalid
+private static int parseIntSafe(String s) {
+    try {
+        return Integer.parseInt(s);
+    } catch (NumberFormatException e) {
+        return -1;
+    }
+}
+
+    // public static  void  checkout() {
+    //     int total =0;
+    //     try {
+    //         BufferedReader br = new BufferedReader(new FileReader(username + ".txt"));
+
+    //         String line;
+    //         while((line=br.readLine())!=null) {
+    //             String[] parts = line.trim().split("\\s+");
+    //             if (integer(parts[5]) || integer(parts[6])) {
+    //                 if (parts.length >= 6) {
+    //                     boolean words = true;
+    //                     try {
+    //                         Integer.parseInt(parts[2]);
+    //                         words = true;
+    //                     } catch (NumberFormatException e) {
+    //                         words = false;
+    //                     }
+    //                     if (words == true) {
+    //                         int bill = Integer.parseInt(parts[5]);
+    //                         total += bill;
+    //                     } else {
+    //                         int bill = Integer.parseInt(parts[6]);
+    //                         total += bill;
+    //                     }
+    //                 } else {
+    //                     System.out.println("Skipping short/invalid line: " + line);
+    //                 }
+    //             }
+
+    //         }
+    //         System.out.println(" Your  Total Bill is " + total);
+    //         FileWriter file = new FileWriter(username + ".txt", true);
+    //         PrintWriter pw = new PrintWriter(file);
+    //         pw.println("TOTAL BILL   :    " + total);
+    //         pw.close();
+    //         file.close();
+    //         System.out.println(   "------->   YOUR ORDER HISTORY IS   <------");
+    //         BufferedReader brr = new BufferedReader(new FileReader(username + ".txt"));
+    //         String lineTer;
+    //         while ((lineTer = br.readLine()) != null) {
+    //             System.out.println(lineTer);
+
+    //         }
+
+    //        brr.close();
+    //         payment(total);
+
+
+    //     } catch (IOException e) {
+    //         System.out.println("error");
+    //         throw new RuntimeException(e);
+
+    //     }
+    // }
     public static void payment(int a){
         String ch = "";
         int choose;
@@ -4930,11 +4984,3 @@ public class shoppingcartUpdated {
     }
 
 }
-
-
-
-
-
-
-
-
